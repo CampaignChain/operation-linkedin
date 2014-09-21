@@ -10,5 +10,8 @@
             "name": "Sandro Groganz",
             "email": "sandro@campaignchain.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": { "CampaignChain\\Operation\\LinkedInBundle\\": "" }
+    }
 }
