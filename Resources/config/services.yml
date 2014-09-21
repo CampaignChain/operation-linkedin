@@ -1,0 +1,9 @@
+parameters:
+
+services:
+    campaignchain.operation.linkedin.job.share_news_item:
+        class: CampaignChain\Operation\LinkedInBundle\Job\ShareNewsItem
+        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+    campaignchain.operation.linkedin.news_item:
+            class: CampaignChain\Operation\LinkedInBundle\EntityService\NewsItem
+            arguments: [ @doctrine.orm.entity_manager ]
