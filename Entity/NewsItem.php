@@ -10,13 +10,14 @@
 
 namespace CampaignChain\Operation\LinkedInBundle\Entity;
 
+use CampaignChain\CoreBundle\Entity\Meta;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="campaignchain_operation_linkedin_news_item")
  */
-class NewsItem
+class NewsItem extends Meta
 {
     /**
      * @ORM\Column(type="integer")
@@ -56,7 +57,6 @@ class NewsItem
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $url;
-
     
     /**
      * Get id
