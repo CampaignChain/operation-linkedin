@@ -1,6 +1,7 @@
 modules:
     campaignchain-linkedin-share-news-item:
         display_name: 'Share News'
-        owns_location: true
         services:
             job: campaignchain.operation.linkedin.job.share_news_item
+        params:
+            owns_location: true
