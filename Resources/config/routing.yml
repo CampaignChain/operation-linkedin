@@ -1,3 +1,0 @@
-campaignchain_operation_linked_in_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: CampaignChainOperationLinkedInBundle:Default:index }
