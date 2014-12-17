@@ -1,0 +1,11 @@
+assetic:
+    bundles:
+        - CampaignChainOperationLinkedInBundle
+    assets:
+        campaignchain_operation_linkedin_css:
+            inputs:
+                - '@CampaignChainOperationLinkedInBundle/Resources/public/css/base.css'
+twig:
+    form:
+        resources:
+            - 'CampaignChainOperationLinkedInBundle:Form:fields.html.twig'
