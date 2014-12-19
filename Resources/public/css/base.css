@@ -25,3 +25,65 @@ file that was distributed with this source code.
 #campaignchain-operation-linkedin-share-news-item .panel-body {
     background-color: #f8f8f8;
 }
+
+#campaignchain-operation-linkedin-share-news-item .post {
+    background: none repeat scroll 0 0 #fff;
+    box-shadow: 0 0 1px #999;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    color: #333;
+    line-height: 17px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post img.location-image {
+    float: left;
+    width: 65px;
+    height: 65px;
+    border-color: #eee #eee #eee -moz-use-text-color;
+    border-image: none;
+    border-style: solid solid solid none;
+    border-width: 1px 1px 1px 0;
+    margin-right: 15px;
+    padding: 0;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .body {
+    padding-left: 80px;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .body > div {
+    padding-bottom: 8px;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .location-name {
+    color: #0077b5;
+    padding-top: 0;
+    font-weight: bold;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .news-item-link-title a {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 18px;
+    color: #333;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .news-item-link-title a:hover,
+#campaignchain-operation-linkedin-share-news-item .post .host a:hover {
+    text-decoration: none;
+    color: #0077b5;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .link a.host {
+    background: url("http://www.linkedin.com/scds/common/u/img/icon/icon_bullet_grey2_4x4.png") no-repeat scroll 100% 4px transparent;
+    color: #999;
+    font-weight: bold;
+    line-height: 14px;
+    padding-right: 14px;
+}
+
+#campaignchain-operation-linkedin-share-news-item .post .link .description {
+    padding-left: 10px;
+}

@@ -59,13 +59,28 @@ class ShareNewsItem implements JobServiceInterface
         $newsitemId = (string)$response->{'update-key'};
 
         $newsitem->setUrl($newsitemUrl);
+        $newsitem->setUpdateKey($newsitemId);
+
+        // Get the data of the item as stored by Linkedin
+        try {
+            $request = $connection->get(
+                'people/~/network/updates/key='.$newsitem->getUpdateKey().'?format=json'
+            );
+            $response = $request->send()->json();
+            $newsitem->setLinkedinData($response);
+        } catch (\Exception $e) {
+            // TODO: Create a new job which gets the data later.
+            // That job should check whether the raw data has meanwhile been
+            // added (e.g. in the read view).
+        }
+
         // Set Operation to closed.
         $newsitem->getOperation()->setStatus(Action::STATUS_CLOSED);
 
         $location = $newsitem->getOperation()->getLocations()[0];
         $location->setIdentifier($newsitemId);
         $location->setUrl($newsitemUrl);
-        $location->setName($status->getOperation()->getName());
+        $location->setName($newsitem->getOperation()->getName());
         $location->setStatus(Medium::STATUS_ACTIVE);
 
         $this->em->flush();

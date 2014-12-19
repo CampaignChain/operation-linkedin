@@ -48,15 +48,32 @@ class NewsItem extends Meta
     
     /**
      * URL included within the share content
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $linkUrl;
 
     /**
-     * direct URL to the share
+     * Direct URL to the share
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $url;
+
+    /**
+     * The Linkedin ID of the published news item.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $updateKey;
+
+    /**
+     * The raw data of the published update as stored by Linkedin upon
+     * publication.
+     *
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    protected $linkedinData;
     
     /**
      * Get id
@@ -181,6 +198,52 @@ class NewsItem extends Meta
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Set updateKey
+     *
+     * @param string $updateKey
+     * @return Status
+     */
+    public function setUpdateKey($updateKey)
+    {
+        $this->updateKey = $updateKey;
+
+        return $this;
+    }
+
+    /**
+     * Get updateKey
+     *
+     * @return string
+     */
+    public function getUpdateKey()
+    {
+        return $this->updateKey;
+    }
+
+    /**
+     * Set linkedinData
+     *
+     * @param string $linkedinData
+     * @return Status
+     */
+    public function setLinkedinData($linkedinData)
+    {
+        $this->linkedinData = $linkedinData;
+
+        return $this;
+    }
+
+    /**
+     * Get linkedinData
+     *
+     * @return string
+     */
+    public function getLinkedinData()
+    {
+        return $this->linkedinData;
     }
 
     /**
