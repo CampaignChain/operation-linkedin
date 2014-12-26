@@ -23,6 +23,7 @@ file that was distributed with this source code.
         <div class="panel panel-default">
             <div class="panel-heading"><i class="fa fa-linkedin-square"></i></div>
             <div class="panel-body">
+            {% if is_live %}
                 {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
                 {% set location = activity.getLocation() %}
                 {% set link_parts = message.content.submittedUrl|campaignchain_parse_url %}
@@ -38,6 +39,12 @@ file that was distributed with this source code.
                         </div>
                     </div>
                 </div>
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        <p>This news item has not been created by Linkedin yet. Please wait a couple of seconds.</p>
+                        <p><a href="{{ app.request.uri }}" class="btn btn-primary" role="button"><i class="fa fa-refresh"></i> Retry</a></p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
