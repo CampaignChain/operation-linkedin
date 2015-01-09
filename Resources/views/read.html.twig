@@ -21,7 +21,14 @@ file that was distributed with this source code.
     </div>
     <div id="campaignchain-operation-linkedin-share-news-item">
         <div class="panel panel-default">
-            <div class="panel-heading"><i class="fa fa-linkedin-square"></i></div>
+            <div class="panel-heading">
+                {% set location = news_item.getOperation().getActivity().getLocation() %}
+                <div class='campaignchain-medium-icon'>
+                    <img class='icon' src='{{ asset( location|campaignchain_medium_icon ) }}'/>
+                    <img class='context-icon' src='{{ asset( location|campaignchain_medium_context ) }}' style='background-image: url("{{ asset( location|campaignchain_medium_context ) }}");'/>
+                    <span class="text"><a href="{{ location.getUrl() }}" target="_blank">{{ location.getName() }}</a></span>
+                </div>
+            </div>
             <div class="panel-body">
             {% if is_live %}
                 {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
