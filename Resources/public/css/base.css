@@ -11,15 +11,11 @@ file that was distributed with this source code.
     background-color: #3f3f3f;
     background-image: -moz-linear-gradient(center top , #696969 0%, #3f3f3f 100%);
     color: #fff;
-    height: 41px;
+    height: 44px;
 }
 
 #campaignchain-operation-linkedin-share-news-item .panel-default > .panel-heading a {
     color: #fff;
-}
-
-#campaignchain-operation-linkedin-share-news-item .panel-default > .panel-heading .fa {
-    font-size: 22px;
 }
 
 #campaignchain-operation-linkedin-share-news-item .panel-body {
