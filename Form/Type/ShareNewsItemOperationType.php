@@ -52,7 +52,7 @@ class ShareNewsItemOperationType extends AbstractType
                 'label' => false,
                 'attr' => array(
                     'placeholder' => 'Add message...',
-                    'max_length' => 200
+                    'maxlength' => 200
                 )
             ));
         $builder
@@ -61,7 +61,7 @@ class ShareNewsItemOperationType extends AbstractType
                 'label' => 'Title of page being shared',
                 'attr' => array(
                     'placeholder' => 'Add title...',
-                    'max_length' => 140
+                    'maxlength' => 140
                 )
             ));
         $builder
@@ -70,7 +70,7 @@ class ShareNewsItemOperationType extends AbstractType
                 'label' => 'Description of page being shared',
                 'attr' => array(
                     'placeholder' => 'Add description...',
-                    'max_length' => 300
+                    'maxlength' => 300
                 )
             ));
         $builder
@@ -79,7 +79,7 @@ class ShareNewsItemOperationType extends AbstractType
                 'label' => 'URL of page being shared',
                 'attr' => array(
                     'placeholder' => 'Add URL...',
-                    'max_length' => 255
+                    'maxlength' => 255
                 )
             ));            
     }
