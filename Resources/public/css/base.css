@@ -7,22 +7,22 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 */
 
-#campaignchain-operation-linkedin-share-news-item .panel-default > .panel-heading {
+#campaignchain-operation-field .panel-default > .panel-heading {
     background-color: #3f3f3f;
     background-image: -moz-linear-gradient(center top , #696969 0%, #3f3f3f 100%);
     color: #fff;
     height: 44px;
 }
 
-#campaignchain-operation-linkedin-share-news-item .panel-default > .panel-heading a {
+#campaignchain-operation-field .panel-default > .panel-heading a {
     color: #fff;
 }
 
-#campaignchain-operation-linkedin-share-news-item .panel-body {
+#campaignchain-operation-field .panel-body {
     background-color: #f8f8f8;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post {
+#campaignchain-operation-field .post {
     background: none repeat scroll 0 0 #fff;
     box-shadow: 0 0 1px #999;
     font-family: Helvetica, Arial, sans-serif;
@@ -34,7 +34,7 @@ file that was distributed with this source code.
     padding-right: 20px;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post img.location-image {
+#campaignchain-operation-field .post img.location-image {
     float: left;
     width: 65px;
     height: 65px;
@@ -46,34 +46,34 @@ file that was distributed with this source code.
     padding: 0;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .body {
+#campaignchain-operation-field .post .body {
     padding-left: 80px;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .body > div {
+#campaignchain-operation-field .post .body > div {
     padding-bottom: 8px;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .location-name {
+#campaignchain-operation-field .post .location-name {
     color: #0077b5;
     padding-top: 0;
     font-weight: bold;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .news-item-link-title a {
+#campaignchain-operation-field .post .news-item-link-title a {
     font-size: 14px;
     font-weight: bold;
     line-height: 18px;
     color: #333;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .news-item-link-title a:hover,
-#campaignchain-operation-linkedin-share-news-item .post .host a:hover {
+#campaignchain-operation-field .post .news-item-link-title a:hover,
+#campaignchain-operation-field .post .host a:hover {
     text-decoration: none;
     color: #0077b5;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .link a.host {
+#campaignchain-operation-field .post .link a.host {
     background: url("http://www.linkedin.com/scds/common/u/img/icon/icon_bullet_grey2_4x4.png") no-repeat scroll 100% 4px transparent;
     color: #999;
     font-weight: bold;
@@ -81,6 +81,6 @@ file that was distributed with this source code.
     padding-right: 14px;
 }
 
-#campaignchain-operation-linkedin-share-news-item .post .link .description {
+#campaignchain-operation-field .post .link .description {
     padding-left: 10px;
 }

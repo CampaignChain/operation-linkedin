@@ -14,47 +14,33 @@ file that was distributed with this source code.
     <link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
     {% endstylesheets %}
 
-    <div class="btn-toolbar" role="toolbar">
-        <div class="btn-group" role="group" aria-label="...">
-            <a href="{{ news_item.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Linkedin</a>
-        </div>
-    </div>
-    <div id="campaignchain-operation-linkedin-share-news-item">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                {% set location = news_item.getOperation().getActivity().getLocation() %}
-                <div class='campaignchain-medium-icon'>
-                    <img class='icon' src='{{ asset( location|campaignchain_medium_icon ) }}'/>
-                    <img class='context-icon' src='{{ asset( location|campaignchain_medium_context ) }}' style='background-image: url("{{ asset( location|campaignchain_medium_context ) }}");'/>
-                    <span class="text"><a href="{{ location.getUrl() }}" target="_blank">{{ location.getName() }}</a></span>
+    {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
+
+    {% if is_live %}
+        {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
+        {% set location = activity.getLocation() %}
+        {% set link_parts = message.content.submittedUrl|campaignchain_parse_url %}
+        <div class="post">
+            <a href="{{ location.getUrl() }}"><img src="{{ location.getImage() }}" class="location-image" width="65" height="65"></a>
+            <div class="body">
+                <div class="location-name"><a href="{{ location.getUrl() }}">{{ location.getName() }}</a></div>
+                <div class="news-item-message">{{ message.comment }}</div>
+                <div class="news-item-link-title"><a href="{{ message.content.submittedUrl }}">{{ message.content.title }}</a></div>
+                <div class="link">
+                    <a href="{{ message.content.submittedUrl }}" class="host">{{ link_parts.host|campaignchain_ltrim('www.') }}</a>
+                    <span class="description">{{ message.content.description }}</span>
                 </div>
             </div>
-            <div class="panel-body">
-            {% if is_live %}
-                {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
-                {% set location = activity.getLocation() %}
-                {% set link_parts = message.content.submittedUrl|campaignchain_parse_url %}
-                <div class="post">
-                    <a href="{{ location.getUrl() }}"><img src="{{ location.getImage() }}" class="location-image" width="65" height="65"></a>
-                    <div class="body">
-                        <div class="location-name"><a href="{{ location.getUrl() }}">{{ location.getName() }}</a></div>
-                        <div class="news-item-message">{{ message.comment }}</div>
-                        <div class="news-item-link-title"><a href="{{ message.content.submittedUrl }}">{{ message.content.title }}</a></div>
-                        <div class="link">
-                            <a href="{{ message.content.submittedUrl }}" class="host">{{ link_parts.host|campaignchain_ltrim('www.') }}</a>
-                            <span class="description">{{ message.content.description }}</span>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                    <div class="alert alert-danger" role="alert">
-                        <p>This news item has not been created by Linkedin yet. Please wait a couple of seconds.</p>
-                        <p><a href="{{ app.request.uri }}" class="btn btn-primary" role="button"><i class="fa fa-refresh"></i> Retry</a></p>
-                    </div>
-                {% endif %}
-            </div>
         </div>
-    </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                <p>This news item has not been created by Linkedin yet. Please wait a couple of seconds.</p>
+                <p><a href="{{ app.request.uri }}" class="btn btn-primary" role="button"><i class="fa fa-refresh"></i> Retry</a></p>
+            </div>
+        {% endif %}
+
+    {% include 'CampaignChainCoreBundle:Operation:field_footer.html.twig' %}
+
     <div class="btn-toolbar" role="toolbar">
         <div class="btn-group" role="group" aria-label="...">
             <a href="{{ news_item.getUrl() }}" target="_blank" class="btn btn-default"><i class="fa fa-external-link"></i> View on Linkedin</a>
