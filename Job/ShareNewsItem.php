@@ -83,6 +83,10 @@ class ShareNewsItem implements JobOperationInterface
         $location->setName($newsitem->getOperation()->getName());
         $location->setStatus(Medium::STATUS_ACTIVE);
 
+        // Schedule data collection for report
+        $report = $this->container->get('campaignchain.job.report.linkedin.share_news_item');
+        $report->schedule($newsitem->getOperation());
+
         $this->em->flush();
 
         $this->message = 'The message "'.$newsitem->getMessage().'" with the ID "'.$newsitemId.'" has been posted on LinkedIn. See it on LinkedIn: <a href="'.$newsitemUrl.'">'.$newsitemUrl.'</a>';

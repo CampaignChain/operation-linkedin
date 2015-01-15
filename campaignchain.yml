@@ -2,6 +2,11 @@ modules:
     campaignchain-linkedin-share-news-item:
         display_name: 'Share News'
         services:
-            job: campaignchain.operation.linkedin.job.share_news_item
+            job: campaignchain.job.operation.linkedin.share_news_item
+            report: campaignchain.job.report.linkedin.share_news_item
         params:
             owns_location: true
+        metrics:
+            activity:
+                - "Likes"
+                - "Comments"
