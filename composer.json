@@ -12,11 +12,7 @@
         }
     ],
     "require": {
-<<<<<<< HEAD
         "campaignchain/activity-linkedin": "dev-master"
-=======
-        "campaignchain/activity-linkedin": "dev-master"
->>>>>>> 1.0.0-beta.1
     },
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\LinkedInBundle\\": "" }
