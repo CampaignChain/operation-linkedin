@@ -11,8 +11,10 @@
 namespace CampaignChain\Operation\LinkedInBundle\EntityService;
 
 use Doctrine\ORM\EntityManager;
+use CampaignChain\CoreBundle\EntityService\OperationServiceInterface;
+use CampaignChain\CoreBundle\Entity\Operation;
 
-class NewsItem
+class NewsItem implements OperationServiceInterface
 {
     protected $em;
 
@@ -32,5 +34,14 @@ class NewsItem
         }
 
         return $newsitem;
+    }
+
+    public function cloneOperation(Operation $oldOperation, Operation $newOperation)
+    {
+        $newsItem = $this->getNewsItemByOperation($oldOperation);
+        $clonedNewsItem = clone $newsItem;
+        $clonedNewsItem->setOperation($newOperation);
+        $this->em->persist($clonedNewsItem);
+        $this->em->flush();
     }
 }
