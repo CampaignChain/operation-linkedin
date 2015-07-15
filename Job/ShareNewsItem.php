@@ -13,10 +13,10 @@ namespace CampaignChain\Operation\LinkedInBundle\Job;
 use CampaignChain\CoreBundle\Entity\Action;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Entity\Medium;
-use CampaignChain\CoreBundle\Job\JobOperationInterface;
+use CampaignChain\CoreBundle\Job\JobActionInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class ShareNewsItem implements JobOperationInterface
+class ShareNewsItem implements JobActionInterface
 {
     protected $em;
     protected $container;
