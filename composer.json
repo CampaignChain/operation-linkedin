@@ -1,7 +1,7 @@
 {
     "name": "campaignchain/operation-linkedin",
     "description": "Collection of various LinkedIn operations.",
-    "keywords": ["linkedin","operation"],
+    "keywords": ["linkedin","operation","campaignchain"],
     "type": "campaignchain-operation",
     "homepage": "http://www.campaignchain.com",
     "license": "Apache-2.0",
