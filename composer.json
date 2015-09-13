@@ -1,6 +1,6 @@
 {
     "name": "campaignchain/operation-linkedin",
-    "description": "Collection of various LinkedIn operations.",
+    "description": "Collection of various LinkedIn operations (e.g. posting a news item).",
     "keywords": ["linkedin","campaignchain"],
     "type": "campaignchain-operation",
     "homepage": "http://www.campaignchain.com",
