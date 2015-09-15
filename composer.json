@@ -17,7 +17,7 @@
         "docs": "http://doc.campaignchain.com"
     },
     "require": {
-        "campaignchain/activity-linkedin": "1.0.0-beta.2"
+        "campaignchain/activity-linkedin": "dev-master"
     },
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\LinkedInBundle\\": "" }
