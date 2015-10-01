@@ -1,4 +1,15 @@
+# This file is part of the CampaignChain package.
+#
+# (c) CampaignChain Inc. <info@campaignchain.com>
+#
+# For the full copyright and license information, please view the LICENSE
+# file that was distributed with this source code.
+
 parameters:
+    campaignchain.operation.linkedin.share_news_item:
+        bundle_name: "campaignchain/operation-linkedin"
+        module_identifier: "campaignchain-linkedin-share-news-item"
+        form_type: "CampaignChain\\Operation\\LinkedInBundle\\Form\\Type\\ShareNewsItemOperationType"
 
 services:
     campaignchain.job.operation.linkedin.share_news_item:
