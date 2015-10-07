@@ -62,8 +62,8 @@ class ShareNewsItemOperationType extends OperationType
             'data_class' => 'CampaignChain\Operation\LinkedInBundle\Entity\NewsItem',
         );
 
-        if($this->operationDetail){
-            $defaults['data'] = $this->operationDetail;
+        if($this->content){
+            $defaults['data'] = $this->content;
         }
         $resolver->setDefaults($defaults);
     }
