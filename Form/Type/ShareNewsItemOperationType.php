@@ -10,40 +10,12 @@
 
 namespace CampaignChain\Operation\LinkedInBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
+use CampaignChain\CoreBundle\Form\Type\OperationType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Doctrine\ORM\EntityManager;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
 
-class ShareNewsItemOperationType extends AbstractType
+class ShareNewsItemOperationType extends OperationType
 {
-    private $newsitem;
-    private $view = 'default';
-    protected $em;
-    protected $container;
-    private $location;
-
-    public function __construct(EntityManager $em, ContainerInterface $container)
-    {
-        $this->em = $em;
-        $this->container = $container;
-    }
-
-    public function setNewsItem($newsitem){
-        $this->newsitem = $newsitem;
-    }
-
-    public function setView($view){
-        $this->view = $view;
-    }
-
-    public function setLocation($location){
-        $this->location = $location;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -84,26 +56,14 @@ class ShareNewsItemOperationType extends AbstractType
             ));            
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        if($this->location){
-            $view->vars['location'] = $this->location;
-        } else {
-            $view->vars['location'] = $options['data']->getOperation()->getActivity()->getLocation();
-        }
-    }
-
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $defaults = array(
             'data_class' => 'CampaignChain\Operation\LinkedInBundle\Entity\NewsItem',
         );
 
-        if($this->newsitem){
-            $defaults['data'] = $this->newsitem;
+        if($this->content){
+            $defaults['data'] = $this->content;
         }
         $resolver->setDefaults($defaults);
     }
