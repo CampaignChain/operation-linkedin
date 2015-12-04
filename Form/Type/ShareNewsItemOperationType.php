@@ -27,33 +27,7 @@ class ShareNewsItemOperationType extends OperationType
                     'maxlength' => 200
                 )
             ));
-        $builder
-            ->add('linkTitle', 'text', array(
-                'property_path' => 'linkTitle',
-                'label' => 'Title of page being shared',
-                'attr' => array(
-                    'placeholder' => 'Add title...',
-                    'maxlength' => 140
-                )
-            ));
-        $builder
-            ->add('description', 'textarea', array(
-                'property_path' => 'linkDescription',
-                'label' => 'Description of page being shared',
-                'attr' => array(
-                    'placeholder' => 'Add description...',
-                    'maxlength' => 300
-                )
-            ));
-        $builder
-            ->add('submitUrl', 'url', array(
-                'property_path' => 'linkUrl',
-                'label' => 'URL of page being shared',
-                'attr' => array(
-                    'placeholder' => 'Add URL...',
-                    'maxlength' => 255
-                )
-            ));            
+
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
