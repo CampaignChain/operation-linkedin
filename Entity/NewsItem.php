@@ -37,12 +37,12 @@ class NewsItem extends Meta
     protected $message;
     
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $linkTitle;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $linkDescription;
     

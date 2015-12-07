@@ -14,9 +14,6 @@ file that was distributed with this source code.
         {% endstylesheets %}
         {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
             {{ form_row(form.message, { 'widget_col': 12}) }}
-            {{ form_row(form.submitUrl, { 'label_col': 3, 'widget_col': 9}) }}
-            {{ form_row(form.linkTitle, { 'label_col': 3, 'widget_col': 9}) }}
-            {{ form_row(form.description, { 'label_col': 3, 'widget_col': 9}) }}
         {% include 'CampaignChainCoreBundle:Operation:field_footer.html.twig' %}
     {% endspaceless %}
 {% endblock %}
