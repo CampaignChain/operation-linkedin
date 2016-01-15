@@ -44,6 +44,7 @@ class NewsItem implements OperationServiceInterface
         $this->em->persist($clonedNewsItem);
         $this->em->flush();
     }
+    
     public function removeOperation($id){
         try {
             $operation = $this->getNewsItemByOperation($id);
