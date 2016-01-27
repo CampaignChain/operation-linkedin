@@ -11,9 +11,11 @@
 namespace CampaignChain\Operation\LinkedInBundle\Job;
 
 use CampaignChain\CoreBundle\Entity\Action;
+use CampaignChain\CoreBundle\Exception\ExternalApiException;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Entity\Medium;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
+use Guzzle\Http\Exception\BadResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShareNewsItem implements JobActionInterface
@@ -43,17 +45,33 @@ class ShareNewsItem implements JobActionInterface
         // Process the link URL to append the Tracking ID attached for
         // call to action tracking.
         $ctaService = $this->container->get('campaignchain.core.cta');
-        $newsitem->setLinkUrl(
-            $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent()
-        );
+
+        // if the message does not contain a url, we need to skip the content block
+        if (is_null($newsitem->getLinkUrl())) {
+
+            // only comment block
+            $xmlBody = "<share><comment>" . $newsitem->getMessage() . "</comment><visibility><code>anyone</code></visibility></share>";
+
+        } else {
+            // process urls and add tracking
+            $newsitem->setLinkUrl(
+                $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent()
+            );
+
+            $xmlBody = "<share><comment>" . $newsitem->getMessage() . "</comment><content><title>" . $newsitem->getLinkTitle() . "</title><description>" . $newsitem->getLinkDescription() . "</description><submitted-url>" . $newsitem->getLinkUrl() . "</submitted-url></content><visibility><code>anyone</code></visibility></share>";
+
+        }
 
         $client = $this->container->get('campaignchain.channel.linkedin.rest.client');
         $connection = $client->connectByActivity($newsitem->getOperation()->getActivity());
-        
-        $xmlBody = "<share><comment>" . $newsitem->getMessage() . "</comment><content><title>" . $newsitem->getLinkTitle() . "</title><description>" . $newsitem->getLinkDescription() . "</description><submitted-url>" . $newsitem->getLinkUrl() . "</submitted-url></content><visibility><code>anyone</code></visibility></share>";
-        
+
         $request = $connection->post('people/~/shares', array('headers' => array('Content-Type' => 'application/xml')), $xmlBody);
-        $response = $request->send()->xml();
+
+        try {
+            $response = $request->send()->xml();
+        } catch (BadResponseException $e) {
+            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+        }
 
         $newsitemUrl = (string)$response->{'update-url'};
         $newsitemId = (string)$response->{'update-key'};
