@@ -58,9 +58,18 @@ XMLBODY;
         } else {
             $ctaService = $this->container->get('campaignchain.core.cta');
 
-            // process urls and add tracking
+            /*
+             * process urls and add tracking
+             * important: both the urls in the message and submitted url field must be identical
+             *
+            */
+
             $newsitem->setLinkUrl(
-                $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent(CTAParserData::URL_TYPE_TRACKED)
+                $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent()
+            );
+
+            $newsitem->setMessage(
+                $ctaService->processCTAs($newsitem->getMessage(), $newsitem->getOperation(), 'txt')->getContent()
             );
 
             $xmlBody = <<<XMLBODY
