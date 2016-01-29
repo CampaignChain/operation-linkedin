@@ -11,10 +11,12 @@
 namespace CampaignChain\Operation\LinkedInBundle\Job;
 
 use CampaignChain\CoreBundle\Entity\Action;
+use CampaignChain\CoreBundle\Entity\CTAParserData;
+use CampaignChain\CoreBundle\Exception\ExternalApiException;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Entity\Medium;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Guzzle\Http\Exception\BadResponseException;
 
 class ShareNewsItem implements JobActionInterface
 {
@@ -40,20 +42,62 @@ class ShareNewsItem implements JobActionInterface
             throw new \Exception('No news item found for an operation with ID: '.$operationId);
         }
 
-        // Process the link URL to append the Tracking ID attached for
-        // call to action tracking.
-        $ctaService = $this->container->get('campaignchain.core.cta');
-        $newsitem->setLinkUrl(
-            $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent()
-        );
+        // if the message does not contain a url, we need to skip the content block
+        if (is_null($newsitem->getLinkUrl())) {
+
+            // only comment block
+            $xmlBody = <<<XMLBODY
+<share>
+    <comment>{$newsitem->getMessage()}</comment>
+    <visibility>
+        <code>anyone</code>
+    </visibility>
+</share>
+XMLBODY;
+
+        } else {
+            $ctaService = $this->container->get('campaignchain.core.cta');
+
+            /*
+             * process urls and add tracking
+             * important: both the urls in the message and submitted url field must be identical
+             *
+            */
+
+            $newsitem->setLinkUrl(
+                $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent()
+            );
+
+            $newsitem->setMessage(
+                $ctaService->processCTAs($newsitem->getMessage(), $newsitem->getOperation(), 'txt')->getContent()
+            );
+
+            $xmlBody = <<<XMLBODY
+<share>
+    <comment>{$newsitem->getMessage()}</comment>
+    <content>
+        <title>{$newsitem->getLinkTitle()}</title>
+        <description>{$newsitem->getLinkDescription()}</description>
+        <submitted-url>{$newsitem->getLinkUrl()}</submitted-url>
+    </content>
+    <visibility>
+        <code>anyone</code>
+    </visibility>
+</share>
+XMLBODY;
+
+        }
 
         $client = $this->container->get('campaignchain.channel.linkedin.rest.client');
         $connection = $client->connectByActivity($newsitem->getOperation()->getActivity());
-        
-        $xmlBody = "<share><comment>" . $newsitem->getMessage() . "</comment><content><title>" . $newsitem->getLinkTitle() . "</title><description>" . $newsitem->getLinkDescription() . "</description><submitted-url>" . $newsitem->getLinkUrl() . "</submitted-url></content><visibility><code>anyone</code></visibility></share>";
-        
+
         $request = $connection->post('people/~/shares', array('headers' => array('Content-Type' => 'application/xml')), $xmlBody);
-        $response = $request->send()->xml();
+
+        try {
+            $response = $request->send()->xml();
+        } catch (BadResponseException $e) {
+            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+        }
 
         $newsitemUrl = (string)$response->{'update-url'};
         $newsitemId = (string)$response->{'update-key'};
