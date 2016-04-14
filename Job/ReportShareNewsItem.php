@@ -10,11 +10,17 @@
 
 namespace CampaignChain\Operation\LinkedInBundle\Job;
 
-use CampaignChain\CoreBundle\Entity\ReportAnalyticsActivityFact;
+use CampaignChain\Channel\LinkedInBundle\REST\LinkedInClient;
 use CampaignChain\CoreBundle\Entity\SchedulerReportOperation;
+use CampaignChain\CoreBundle\EntityService\FactService;
 use CampaignChain\CoreBundle\Job\JobReportInterface;
+use CampaignChain\Operation\LinkedInBundle\Entity\NewsItem;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class ReportShareNewsItem
+ * @package CampaignChain\Operation\LinkedInBundle\Job
+ */
 class ReportShareNewsItem implements JobReportInterface
 {
     const BUNDLE_NAME = 'campaignchain/operation-linkedin';
@@ -22,17 +28,43 @@ class ReportShareNewsItem implements JobReportInterface
     const METRIC_SHARES = 'Shares';
     const METRIC_COMMENTS = 'Comments';
 
+    /**
+     * @var EntityManager
+     */
     protected $em;
-    protected $container;
 
+    /**
+     * @var FactService
+     */
+    protected $factService;
+
+    /**
+     * @var LinkedInClient
+     */
+    protected $client;
+
+    /**
+     * @var string
+     */
     protected $message;
 
+    /**
+     * @var NewsItem
+     */
     protected $newsitem;
 
-    public function __construct(EntityManager $em, $container)
+    /**
+     * ReportShareNewsItem constructor.
+     *
+     * @param EntityManager  $em
+     * @param FactService    $factService
+     * @param LinkedInClient $client
+     */
+    public function __construct(EntityManager $em, FactService $factService, LinkedInClient $client)
     {
         $this->em = $em;
-        $this->container = $container;
+        $this->factService = $factService;
+        $this->client = $client;
     }
 
     public function schedule($operation, $facts = null)
@@ -51,30 +83,25 @@ class ReportShareNewsItem implements JobReportInterface
         }
 
         $facts[self::METRIC_LIKES] = 0;
-//        $facts[self::METRIC_SHARES] = 0;
         $facts[self::METRIC_COMMENTS] = 0;
 
-        $factService = $this->container->get('campaignchain.core.fact');
-        $factService->addFacts('activity', self::BUNDLE_NAME, $operation, $facts);
+        $this->factService->addFacts('activity', self::BUNDLE_NAME, $operation, $facts);
     }
 
+    /**
+     * @param string $operationId
+     * @return string
+     * @throws \Exception
+     */
     public function execute($operationId)
     {
         $this->newsitem = $this->em->getRepository('CampaignChainOperationLinkedInBundle:NewsItem')->findOneByOperation($operationId);
         if (!$this->newsitem) {
             throw new \Exception('No Linkedin news item found for an operation with ID: '.$operationId);
         }
+        $activity = $this->newsitem->getOperation()->getActivity();
 
-        $channel = $this->container->get('campaignchain.channel.linkedin.rest.client');
-        $connection = $channel->connectByActivity($this->newsitem->getOperation()->getActivity());
-
-        // Get the data of the item as stored by Linkedin
-        $request = $connection->get('people/~/network/updates/key='.$this->newsitem->getUpdateKey().'?format=json');
-        $response = $request->send()->json();
-
-        ob_start();
-        print_r($response);
-        $this->message = ob_get_clean();
+        $this->message = $this->client->getCompanyUpdate($activity, $this->newsitem);
 
         $likes = 0;
         if(isset($response['numLikes'])){
@@ -88,13 +115,9 @@ class ReportShareNewsItem implements JobReportInterface
 
         // Add report data.
         $facts[self::METRIC_LIKES] = $likes;
-//        $facts[self::METRIC_SHARES] = $shares;
         $facts[self::METRIC_COMMENTS] = $comments;
 
-        $factService = $this->container->get('campaignchain.core.fact');
-        $factService->addFacts('activity', self::BUNDLE_NAME, $this->newsitem->getOperation(), $facts);
-
-        //$this->message = 'Added to report: likes = '.$likes.', comments = '.$comments.'.';
+        $this->factService->addFacts('activity', self::BUNDLE_NAME, $this->newsitem->getOperation(), $facts);
 
         return self::STATUS_OK;
     }

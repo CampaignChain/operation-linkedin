@@ -14,16 +14,33 @@ use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\EntityService\OperationServiceInterface;
 use CampaignChain\CoreBundle\Entity\Operation;
 
+/**
+ * Class NewsItem
+ * @package CampaignChain\Operation\LinkedInBundle\EntityService
+ */
 class NewsItem implements OperationServiceInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
 
+    /**
+     * NewsItem constructor.
+     * @param EntityManager $em
+     */
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
     }
 
-    public function getNewsItemByOperation($id){
+    /**
+     * @param $id
+     * @return \CampaignChain\Operation\LinkedInBundle\Entity\NewsItem
+     * @throws \Exception
+     */
+    public function getNewsItemByOperation($id)
+    {
         $newsitem = $this->em->getRepository('CampaignChainOperationLinkedInBundle:NewsItem')
             ->findOneByOperation($id);
 
@@ -36,6 +53,10 @@ class NewsItem implements OperationServiceInterface
         return $newsitem;
     }
 
+    /**
+     * @param Operation $oldOperation
+     * @param Operation $newOperation
+     */
     public function cloneOperation(Operation $oldOperation, Operation $newOperation)
     {
         $newsItem = $this->getNewsItemByOperation($oldOperation);
@@ -44,7 +65,10 @@ class NewsItem implements OperationServiceInterface
         $this->em->persist($clonedNewsItem);
         $this->em->flush();
     }
-    
+
+    /**
+     * @param $id
+     */
     public function removeOperation($id){
         try {
             $operation = $this->getNewsItemByOperation($id);

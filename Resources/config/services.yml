@@ -14,10 +14,10 @@ parameters:
 services:
     campaignchain.job.operation.linkedin.share_news_item:
         class: CampaignChain\Operation\LinkedInBundle\Job\ShareNewsItem
-        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+        arguments: [ "@doctrine.orm.entity_manager", "@campaignchain.core.cta", "@campaignchain.channel.linkedin.rest.client", "@campaignchain.job.report.linkedin.share_news_item" ]
     campaignchain.job.report.linkedin.share_news_item:
         class: CampaignChain\Operation\LinkedInBundle\Job\ReportShareNewsItem
-        arguments: [ @doctrine.orm.entity_manager, @service_container ]
+        arguments: [ "@doctrine.orm.entity_manager", "@campaignchain.core.fact", "@campaignchain.channel.linkedin.rest.client"]
     campaignchain.operation.linkedin.news_item:
             class: CampaignChain\Operation\LinkedInBundle\EntityService\NewsItem
             arguments: [ @doctrine.orm.entity_manager ]
