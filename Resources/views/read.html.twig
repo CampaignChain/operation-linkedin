@@ -17,7 +17,11 @@ file that was distributed with this source code.
     {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
 
     {% if is_live %}
-        {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
+        {% if is_company %}
+            {% set message = news_item.getLinkedinData().updateContent.companyStatusUpdate.share %}
+        {% else %}
+            {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
+        {% endif %}
         {% set location = activity.getLocation() %}
         {% set link_parts = message.content.submittedUrl|campaignchain_parse_url %}
         <div class="post">

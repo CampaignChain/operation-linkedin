@@ -10,139 +10,149 @@
 
 namespace CampaignChain\Operation\LinkedInBundle\Job;
 
+use CampaignChain\Channel\LinkedInBundle\REST\LinkedInClient;
 use CampaignChain\CoreBundle\Entity\Action;
-use CampaignChain\CoreBundle\Entity\CTAParserData;
-use CampaignChain\CoreBundle\Exception\ExternalApiException;
+use CampaignChain\CoreBundle\EntityService\CTAService;
+use CampaignChain\Operation\LinkedInBundle\Entity\NewsItem;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Entity\Medium;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
-use Guzzle\Http\Exception\BadResponseException;
 
+/**
+ * Class ShareNewsItem
+ * @package CampaignChain\Operation\LinkedInBundle\Job
+ */
 class ShareNewsItem implements JobActionInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
-    protected $container;
 
+    /**
+     * @var CTAService
+     */
+    protected $ctaService;
+
+    /**
+     * @var LinkedInClient
+     */
+    protected $client;
+
+    /**
+     * @var ReportShareNewsItem
+     */
+    protected $reportShareNewsItem;
+
+    /**
+     * @var string
+     */
     protected $message;
-    protected $linkTitle;
-    protected $linkDescription;
-    protected $linkUrl;
 
-    public function __construct(EntityManager $em, $container)
+    /**
+     * ShareNewsItem constructor.
+     *
+     * @param EntityManager       $em
+     * @param CTAService          $ctaService
+     * @param LinkedInClient      $client
+     * @param ReportShareNewsItem $reportShareNewsItem
+     */
+    public function __construct(EntityManager $em, CTAService $ctaService, LinkedInClient $client, ReportShareNewsItem $reportShareNewsItem)
     {
         $this->em = $em;
-        $this->container = $container;
+        $this->ctaService = $ctaService;
+        $this->client = $client;
+        $this->reportShareNewsItem = $reportShareNewsItem;
     }
 
+    /**
+     * @param string $operationId
+     * @return string
+     * @throws \Exception
+     */
     public function execute($operationId)
     {
-        $newsitem = $this->em->getRepository('CampaignChainOperationLinkedInBundle:NewsItem')->findOneByOperation($operationId);
+        /** @var NewsItem $newsItem */
+        $newsItem = $this->em
+            ->getRepository('CampaignChainOperationLinkedInBundle:NewsItem')
+            ->findOneByOperation($operationId);
 
-        if (!$newsitem) {
+        if (!$newsItem) {
             throw new \Exception('No news item found for an operation with ID: '.$operationId);
         }
 
         // if the message does not contain a url, we need to skip the content block
-        if (is_null($newsitem->getLinkUrl())) {
-
-            // only comment block
-            $xmlBody = <<<XMLBODY
-<share>
-    <comment>{$newsitem->getMessage()}</comment>
-    <visibility>
-        <code>anyone</code>
-    </visibility>
-</share>
-XMLBODY;
-
+        if (is_null($newsItem->getLinkUrl())) {
+            $content = [
+                'comment' => $newsItem->getMessage(),
+                'visibility' => [
+                    'code' => 'anyone',
+                ],
+            ];
         } else {
-            $ctaService = $this->container->get('campaignchain.core.cta');
-
             /*
              * process urls and add tracking
              * important: both the urls in the message and submitted url field must be identical
-             *
             */
 
-            $newsitem->setLinkUrl(
-                $ctaService->processCTAs($newsitem->getLinkUrl(), $newsitem->getOperation(), 'txt')->getContent()
+            $newsItem->setLinkUrl(
+                $this->ctaService->processCTAs($newsItem->getLinkUrl(), $newsItem->getOperation(), 'txt')->getContent()
+            );
+            $newsItem->setMessage(
+                $this->ctaService->processCTAs($newsItem->getMessage(), $newsItem->getOperation(), 'txt')->getContent()
             );
 
-            $newsitem->setMessage(
-                $ctaService->processCTAs($newsitem->getMessage(), $newsitem->getOperation(), 'txt')->getContent()
-            );
-
-            $xmlBody = <<<XMLBODY
-<share>
-    <comment>{$newsitem->getMessage()}</comment>
-    <content>
-        <title>{$newsitem->getLinkTitle()}</title>
-        <description>{$newsitem->getLinkDescription()}</description>
-        <submitted-url>{$newsitem->getLinkUrl()}</submitted-url>
-    </content>
-    <visibility>
-        <code>anyone</code>
-    </visibility>
-</share>
-XMLBODY;
-
+            $content = [
+                'comment' => $newsItem->getMessage(),
+                'content' => [
+                    'title' => $newsItem->getLinkTitle(),
+                    'description' => $newsItem->getLinkDescription(),
+                    'submitted-url' => $newsItem->getLinkUrl(),
+                ],
+                'visibility' => [
+                    'code' => 'anyone',
+                ],
+            ];
         }
 
-        $client = $this->container->get('campaignchain.channel.linkedin.rest.client');
-        $connection = $client->connectByActivity($newsitem->getOperation()->getActivity());
+        $activity = $newsItem->getOperation()->getActivity();
+        $locationModuleIdentifier = $activity->getLocation()->getLocationModule()->getIdentifier();
+        $isCompanyPageShare = 'campaignchain-linkedin-page' == $locationModuleIdentifier;
 
-        $request = $connection->post('people/~/shares', array('headers' => array('Content-Type' => 'application/xml')), $xmlBody);
-
-        try {
-            $response = $request->send()->xml();
-        } catch (BadResponseException $e) {
-            throw new ExternalApiException($e->getMessage(), $e->getCode(), $e);
+        if ($isCompanyPageShare) {
+            $response = $this->client->shareOnCompanyPage($activity, $content);
+        } else {
+            $response = $this->client->shareOnUserPage($activity, $content);
         }
 
-        $newsitemUrl = (string)$response->{'update-url'};
-        $newsitemId = (string)$response->{'update-key'};
+        $newsItem->setUrl($response['updateUrl']);
+        $newsItem->setUpdateKey($response['updateKey']);
 
-        $newsitem->setUrl($newsitemUrl);
-        $newsitem->setUpdateKey($newsitemId);
-
-        // Get the data of the item as stored by Linkedin
-        try {
-            $request = $connection->get(
-                'people/~/network/updates/key='.$newsitem->getUpdateKey().'?format=json'
-            );
-            $response = $request->send()->json();
-            $newsitem->setLinkedinData($response);
-        } catch (\Exception $e) {
-            // TODO: Create a new job which gets the data later.
-            // That job should check whether the raw data has meanwhile been
-            // added (e.g. in the read view).
+        if ($isCompanyPageShare) {
+            $statistics = $this->client->getCompanyUpdate($activity, $newsItem);
+        } else {
+            $statistics = $this->client->getUserUpdate($activity, $newsItem);
         }
+        $newsItem->setLinkedinData($statistics);
+
 
         // Set Operation to closed.
-        $newsitem->getOperation()->setStatus(Action::STATUS_CLOSED);
+        $newsItem->getOperation()->setStatus(Action::STATUS_CLOSED);
 
-        $location = $newsitem->getOperation()->getLocations()[0];
-        $location->setIdentifier($newsitemId);
-        $location->setUrl($newsitemUrl);
-        $location->setName($newsitem->getOperation()->getName());
+        $location = $newsItem->getOperation()->getLocations()[0];
+        $location->setIdentifier($response['updateKey']);
+        $location->setUrl($response['updateUrl']);
+        $location->setName($newsItem->getOperation()->getName());
         $location->setStatus(Medium::STATUS_ACTIVE);
 
         // Schedule data collection for report
-        $report = $this->container->get('campaignchain.job.report.linkedin.share_news_item');
-        $report->schedule($newsitem->getOperation());
+        $this->reportShareNewsItem->schedule($newsItem->getOperation());
 
         $this->em->flush();
 
-        $this->message = 'The message "'.$newsitem->getMessage().'" with the ID "'.$newsitemId.'" has been posted on LinkedIn. See it on LinkedIn: <a href="'.$newsitemUrl.'">'.$newsitemUrl.'</a>';
+        $this->message = 'The message "'.$newsItem->getMessage().'" with the ID "'.$newsItem->getUpdateKey().'" has been posted on LinkedIn. See it on LinkedIn: <a href="'.$newsItem->getUrl().'">'.$newsItem->getUrl().'</a>';
 
         return self::STATUS_OK;
-//            }
-//            else {
-//                // Handle errors, if authentication did not work.
-//                // 1) Check if App is installed.
-//                // 2) check if access token is valid and retrieve new access token if necessary.
-//                // Log error, send email, prompt user, ask to check App Key and Secret or to authenticate again
-//            }
     }
 
     public function getMessage(){
