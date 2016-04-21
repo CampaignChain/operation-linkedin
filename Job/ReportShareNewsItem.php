@@ -101,7 +101,8 @@ class ReportShareNewsItem implements JobReportInterface
         }
         $activity = $this->newsitem->getOperation()->getActivity();
 
-        $this->message = $this->client->getCompanyUpdate($activity, $this->newsitem);
+        $connection = $this->client->getConnectionByActivity($activity);
+        $this->message = $connection->getCompanyUpdate($activity, $this->newsitem);
 
         $likes = 0;
         if(isset($response['numLikes'])){
