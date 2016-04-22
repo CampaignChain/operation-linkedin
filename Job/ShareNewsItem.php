@@ -119,19 +119,21 @@ class ShareNewsItem implements JobActionInterface
         $locationModuleIdentifier = $activity->getLocation()->getLocationModule()->getIdentifier();
         $isCompanyPageShare = 'campaignchain-linkedin-page' == $locationModuleIdentifier;
 
+        $connection = $this->client->getConnectionByActivity($activity);
+
         if ($isCompanyPageShare) {
-            $response = $this->client->shareOnCompanyPage($activity, $content);
+            $response = $connection->shareOnCompanyPage($activity, $content);
         } else {
-            $response = $this->client->shareOnUserPage($activity, $content);
+            $response = $connection->shareOnUserPage($content);
         }
 
         $newsItem->setUrl($response['updateUrl']);
         $newsItem->setUpdateKey($response['updateKey']);
 
         if ($isCompanyPageShare) {
-            $statistics = $this->client->getCompanyUpdate($activity, $newsItem);
+            $statistics = $connection->getCompanyUpdate($activity, $newsItem);
         } else {
-            $statistics = $this->client->getUserUpdate($activity, $newsItem);
+            $statistics = $connection->getUserUpdate($activity, $newsItem);
         }
         $newsItem->setLinkedinData($statistics);
 
