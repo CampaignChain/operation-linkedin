@@ -130,14 +130,6 @@ class ShareNewsItem implements JobActionInterface
         $newsItem->setUrl($response['updateUrl']);
         $newsItem->setUpdateKey($response['updateKey']);
 
-        if ($isCompanyPageShare) {
-            $statistics = $connection->getCompanyUpdate($activity, $newsItem);
-        } else {
-            $statistics = $connection->getUserUpdate($activity, $newsItem);
-        }
-        $newsItem->setLinkedinData($statistics);
-
-
         // Set Operation to closed.
         $newsItem->getOperation()->setStatus(Action::STATUS_CLOSED);
 
