@@ -17,6 +17,7 @@ use CampaignChain\Operation\LinkedInBundle\Entity\NewsItem;
 use Doctrine\ORM\EntityManager;
 use CampaignChain\CoreBundle\Entity\Medium;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 
 /**
  * Class ShareNewsItem
@@ -50,19 +51,26 @@ class ShareNewsItem implements JobActionInterface
     protected $message;
 
     /**
+     * @var CacheManager
+     */
+    protected $cacheManager;
+
+    /**
      * ShareNewsItem constructor.
      *
-     * @param EntityManager       $em
-     * @param CTAService          $ctaService
-     * @param LinkedInClient      $client
+     * @param EntityManager $em
+     * @param CTAService $ctaService
+     * @param LinkedInClient $client
      * @param ReportShareNewsItem $reportShareNewsItem
+     * @param CacheManager $cacheManager
      */
-    public function __construct(EntityManager $em, CTAService $ctaService, LinkedInClient $client, ReportShareNewsItem $reportShareNewsItem)
+    public function __construct(EntityManager $em, CTAService $ctaService, LinkedInClient $client, ReportShareNewsItem $reportShareNewsItem, CacheManager $cacheManager)
     {
         $this->em = $em;
         $this->ctaService = $ctaService;
         $this->client = $client;
         $this->reportShareNewsItem = $reportShareNewsItem;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -113,6 +121,17 @@ class ShareNewsItem implements JobActionInterface
                     'code' => 'anyone',
                 ],
             ];
+        }
+
+        //have images?
+        $images = $this->em
+            ->getRepository('CampaignChainHookImageBundle:Image')
+            ->getImagesForOperation($newsItem->getOperation());
+
+        if ($images) {
+            //Linkedin can handle only 1 image
+            $content['content']['submitted-image-url'] = $this->cacheManager
+                ->getBrowserPath($images[0]->getPath(), "auto_rotate");
         }
 
         $activity = $newsItem->getOperation()->getActivity();
