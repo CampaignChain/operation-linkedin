@@ -24,7 +24,7 @@ class ShareNewsItemOperationType extends OperationType
                 'label' => false,
                 'attr' => array(
                     'placeholder' => 'Add message...',
-                    'maxlength' => 200
+                    'maxlength' => 600
                 )
             ));
 
