@@ -121,17 +121,19 @@ class ShareNewsItem implements JobActionInterface
                     'code' => 'anyone',
                 ],
             ];
-        }
 
-        //have images?
-        $images = $this->em
-            ->getRepository('CampaignChainHookImageBundle:Image')
-            ->getImagesForOperation($newsItem->getOperation());
+            //have images?
+            //At this point LinkedIn accept an image link only if we provide a submitted-url
+            $images = $this->em
+                ->getRepository('CampaignChainHookImageBundle:Image')
+                ->getImagesForOperation($newsItem->getOperation());
 
-        if ($images) {
-            //Linkedin can handle only 1 image
-            $content['content']['submitted-image-url'] = $this->cacheManager
-                ->getBrowserPath($images[0]->getPath(), "auto_rotate");
+            if ($images) {
+                //Linkedin can handle only 1 image
+                $content['content']['submitted-image-url'] = $this->cacheManager
+                    ->getBrowserPath($images[0]->getPath(), "auto_rotate");
+
+            }
         }
 
         $activity = $newsItem->getOperation()->getActivity();
