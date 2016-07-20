@@ -24,23 +24,42 @@ limitations under the License.
     {% include 'CampaignChainCoreBundle:Operation:field_header.html.twig' %}
 
     {% if is_live %}
-        {% if is_company %}
-            {% set message = news_item.getLinkedinData().updateContent.companyStatusUpdate.share %}
+        {% if news_item.getLinkedinData() %}
+            {% if is_company %}
+                {% set remoteContent = news_item.getLinkedinData().updateContent.companyStatusUpdate.share %}
+            {% else %}
+                {% set remoteContent = news_item.getLinkedinData().updateContent.person.currentShare %}
+            {% endif %}
+            {% set linkUrl = remoteContent.content.submittedUrl %}
+            {% set message = remoteContent.comment %}
+            {% set linkTitle = remoteContent.content.title %}
+            {% set linkDescription = remoteContent.content.description %}
         {% else %}
-            {% set message = news_item.getLinkedinData().updateContent.person.currentShare %}
+            {% set linkUrl = news_item.getLinkUrl() %}
+            {% if linkUrl %}
+                {% set message = news_item.getMessage()|replace({(linkUrl): ""}) %}
+            {% else %}
+                {% set message = news_item.getMessage() %}
+            {% endif %}
+            {% set linkTitle = news_item.getLinkTitle() %}
+            {% set linkDescription = news_item.getLinkDescription() %}
         {% endif %}
         {% set location = activity.getLocation() %}
-        {% set link_parts = message.content.submittedUrl|campaignchain_parse_url %}
+        {% if linkUrl %}
+            {% set link_parts = linkUrl|campaignchain_parse_url %}
+        {% endif %}
         <div class="post">
             <a href="{{ location.getUrl() }}"><img src="{{ location.getImage() }}" class="location-image" width="65" height="65"></a>
             <div class="body">
                 <div class="location-name"><a href="{{ location.getUrl() }}">{{ location.getName() }}</a></div>
-                <div class="news-item-message">{{ message.comment }}</div>
-                <div class="news-item-link-title"><a href="{{ message.content.submittedUrl }}">{{ message.content.title }}</a></div>
+                <div class="news-item-message">{{ message }}</div>
+                {% if linkUrl %}
+                <div class="news-item-link-title"><a href="{{ linkUrl }}">{{ linkTitle }}</a></div>
                 <div class="link">
-                    <a href="{{ message.content.submittedUrl }}" class="host">{{ link_parts.host|campaignchain_ltrim('www.') }}</a>
-                    <span class="description">{{ message.content.description }}</span>
+                    <a href="{{ linkUrl }}" class="host">{{ link_parts.host|campaignchain_ltrim('www.') }}</a>
+                    <span class="description">{{ linkDescription }}</span>
                 </div>
+                {% endif %}
             </div>
         </div>
         {% else %}
