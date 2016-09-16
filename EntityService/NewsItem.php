@@ -41,10 +41,16 @@ class NewsItem implements OperationServiceInterface
         $this->em = $em;
     }
 
+    public function getContent(Operation $operation)
+    {
+        return $this->getNewsItemByOperation($operation->getId());
+    }
+
     /**
      * @param $id
      * @return \CampaignChain\Operation\LinkedInBundle\Entity\NewsItem
      * @throws \Exception
+     * @deprecated Use getContent(Operation $operation) instead.
      */
     public function getNewsItemByOperation($id)
     {
