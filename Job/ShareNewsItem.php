@@ -111,10 +111,10 @@ class ShareNewsItem implements JobActionInterface
             */
 
             $newsItem->setLinkUrl(
-                $this->ctaService->processCTAs($newsItem->getLinkUrl(), $newsItem->getOperation(), 'txt')->getContent()
+                $this->ctaService->processCTAs($newsItem->getLinkUrl(), $newsItem->getOperation())->getContent()
             );
             $newsItem->setMessage(
-                $this->ctaService->processCTAs($newsItem->getMessage(), $newsItem->getOperation(), 'txt')->getContent()
+                $this->ctaService->processCTAs($newsItem->getMessage(), $newsItem->getOperation())->getContent()
             );
 
             $content = [
