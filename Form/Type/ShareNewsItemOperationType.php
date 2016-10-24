@@ -18,6 +18,7 @@
 namespace CampaignChain\Operation\LinkedInBundle\Form\Type;
 
 use CampaignChain\CoreBundle\Form\Type\OperationType;
+use CampaignChain\TextareaCountFormTypeBundle\Form\Type\TextareaCountType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -26,7 +27,7 @@ class ShareNewsItemOperationType extends OperationType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('message', 'textarea', array(
+            ->add('message', TextareaCountType::class, array(
                 'property_path' => 'message',
                 'label' => false,
                 'attr' => array(

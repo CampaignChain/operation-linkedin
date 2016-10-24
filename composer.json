@@ -17,7 +17,8 @@
         "docs": "http://doc.campaignchain.com"
     },
     "require": {
-        "campaignchain/activity-linkedin": "dev-master"
+        "campaignchain/activity-linkedin": "dev-master",
+        "campaignchain/form-type-textarea-count": "dev-master"
     },
     "autoload": {
         "psr-4": { "CampaignChain\\Operation\\LinkedInBundle\\": "" }
