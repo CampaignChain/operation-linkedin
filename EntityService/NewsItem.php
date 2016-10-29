@@ -17,7 +17,7 @@
 
 namespace CampaignChain\Operation\LinkedInBundle\EntityService;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use CampaignChain\CoreBundle\EntityService\OperationServiceInterface;
 use CampaignChain\CoreBundle\Entity\Operation;
 
@@ -28,17 +28,17 @@ use CampaignChain\CoreBundle\Entity\Operation;
 class NewsItem implements OperationServiceInterface
 {
     /**
-     * @var EntityManager
+     * @var Registry
      */
     protected $em;
 
     /**
      * NewsItem constructor.
-     * @param EntityManager $em
+     * @param ManagerRegistry $managerRegistry
      */
-    public function __construct(EntityManager $em)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
     }
 
     public function getContent(Operation $operation)

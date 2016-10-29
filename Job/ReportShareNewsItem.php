@@ -22,7 +22,7 @@ use CampaignChain\CoreBundle\Entity\SchedulerReportOperation;
 use CampaignChain\CoreBundle\EntityService\FactService;
 use CampaignChain\CoreBundle\Job\JobReportInterface;
 use CampaignChain\Operation\LinkedInBundle\Entity\NewsItem;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
  * Class ReportShareNewsItem
@@ -36,7 +36,7 @@ class ReportShareNewsItem implements JobReportInterface
     const METRIC_COMMENTS = 'Comments';
 
     /**
-     * @var EntityManager
+     * @var Registry
      */
     protected $em;
 
@@ -63,13 +63,13 @@ class ReportShareNewsItem implements JobReportInterface
     /**
      * ReportShareNewsItem constructor.
      *
-     * @param EntityManager  $em
+     * @param Registry  $em
      * @param FactService    $factService
      * @param LinkedInClient $client
      */
-    public function __construct(EntityManager $em, FactService $factService, LinkedInClient $client)
+    public function __construct(ManagerRegistry $managerRegistry, FactService $factService, LinkedInClient $client)
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
         $this->factService = $factService;
         $this->client = $client;
     }

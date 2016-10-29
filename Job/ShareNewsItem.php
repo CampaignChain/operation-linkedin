@@ -21,7 +21,7 @@ use CampaignChain\Channel\LinkedInBundle\REST\LinkedInClient;
 use CampaignChain\CoreBundle\Entity\Action;
 use CampaignChain\CoreBundle\EntityService\CTAService;
 use CampaignChain\Operation\LinkedInBundle\Entity\NewsItem;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use CampaignChain\CoreBundle\Entity\Medium;
 use CampaignChain\CoreBundle\Job\JobActionInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
@@ -33,7 +33,7 @@ use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 class ShareNewsItem implements JobActionInterface
 {
     /**
-     * @var EntityManager
+     * @var Registry
      */
     protected $em;
 
@@ -65,15 +65,15 @@ class ShareNewsItem implements JobActionInterface
     /**
      * ShareNewsItem constructor.
      *
-     * @param EntityManager $em
+     * @param ManagerRegistry $managerRegistry
      * @param CTAService $ctaService
      * @param LinkedInClient $client
      * @param ReportShareNewsItem $reportShareNewsItem
      * @param CacheManager $cacheManager
      */
-    public function __construct(EntityManager $em, CTAService $ctaService, LinkedInClient $client, ReportShareNewsItem $reportShareNewsItem, CacheManager $cacheManager)
+    public function __construct(ManagerRegistry $managerRegistry, CTAService $ctaService, LinkedInClient $client, ReportShareNewsItem $reportShareNewsItem, CacheManager $cacheManager)
     {
-        $this->em = $em;
+        $this->em = $managerRegistry->getManager();
         $this->ctaService = $ctaService;
         $this->client = $client;
         $this->reportShareNewsItem = $reportShareNewsItem;
