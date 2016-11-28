@@ -96,8 +96,19 @@ class ShareNewsItem implements JobActionInterface
             throw new \Exception('No news item found for an operation with ID: '.$operationId);
         }
 
+        //have images?
+        $images = $this->em
+            ->getRepository('CampaignChainHookImageBundle:Image')
+            ->getImagesForOperation($newsItem->getOperation());
+
         // if the message does not contain a url, we need to skip the content block
         if (is_null($newsItem->getLinkUrl())) {
+            // LinkedIn accepts an image link only if we also provided a submitted URL.
+            if($images){
+                throw new \Exception('To include an image, you must also provide a URL in the text message.');
+                return self::STATUS_WARNING;
+            }
+
             $content = [
                 'comment' => $newsItem->getMessage(),
                 'visibility' => [
@@ -128,12 +139,6 @@ class ShareNewsItem implements JobActionInterface
                     'code' => 'anyone',
                 ],
             ];
-
-            //have images?
-            //At this point LinkedIn accept an image link only if we provide a submitted-url
-            $images = $this->em
-                ->getRepository('CampaignChainHookImageBundle:Image')
-                ->getImagesForOperation($newsItem->getOperation());
 
             if ($images) {
                 //Linkedin can handle only 1 image
