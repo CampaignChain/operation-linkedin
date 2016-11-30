@@ -143,7 +143,7 @@ class ShareNewsItem implements JobActionInterface
             if ($images) {
                 //Linkedin can handle only 1 image
                 $content['content']['submitted-image-url'] = $this->cacheManager
-                    ->getBrowserPath($images[0]->getPath(), "auto_rotate");
+                    ->getBrowserPath($images[0]->getPath(), "campaignchain_linkedin_news_item");
 
             }
         }
