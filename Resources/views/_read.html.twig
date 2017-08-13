@@ -30,7 +30,11 @@ limitations under the License.
         {% set linkUrl = remoteContent.content.submittedUrl %}
         {% set message = remoteContent.comment %}
         {% set linkTitle = remoteContent.content.title %}
-        {% set linkDescription = remoteContent.content.description %}
+        {% if remoteContent.content.description is defined %}
+            {% set linkDescription = remoteContent.content.description %}
+        {% else %}
+            {% set linkDescription = "" %}
+        {% endif %}
     {% else %}
         {% set linkUrl = news_item.getLinkUrl() %}
         {% if linkUrl %}
