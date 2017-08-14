@@ -6,9 +6,8 @@ assetic:
             inputs:
                 - '@CampaignChainOperationLinkedInBundle/Resources/public/css/base.css'
 twig:
-    form:
-        resources:
-            - 'CampaignChainOperationLinkedInBundle:Form:fields.html.twig'
+    form_themes:
+        - 'CampaignChainOperationLinkedInBundle:Form:fields.html.twig'
 
 liip_imagine:
     filter_sets:
