@@ -27,4 +27,4 @@ services:
         arguments: [ "@doctrine", "@campaignchain.core.fact", "@campaignchain.channel.linkedin.rest.client"]
     campaignchain.operation.linkedin.news_item:
             class: CampaignChain\Operation\LinkedInBundle\EntityService\NewsItem
-            arguments: [ @doctrine ]
+            arguments: [ '@doctrine' ]
