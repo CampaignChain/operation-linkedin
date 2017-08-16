@@ -49,7 +49,7 @@ class ShareNewsItemOperationType extends OperationType
         $resolver->setDefaults($defaults);
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'campaignchain_operation_linkedin_share_news_item';
     }
