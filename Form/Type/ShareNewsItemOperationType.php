@@ -19,7 +19,7 @@ namespace CampaignChain\Operation\LinkedInBundle\Form\Type;
 
 use CampaignChain\CoreBundle\Form\Type\OperationType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShareNewsItemOperationType extends OperationType
 {
@@ -37,7 +37,7 @@ class ShareNewsItemOperationType extends OperationType
 
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $defaults = array(
             'data_class' => 'CampaignChain\Operation\LinkedInBundle\Entity\NewsItem',

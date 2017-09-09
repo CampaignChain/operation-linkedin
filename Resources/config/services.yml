@@ -28,3 +28,10 @@ services:
     campaignchain.operation.linkedin.news_item:
             class: CampaignChain\Operation\LinkedInBundle\EntityService\NewsItem
             arguments: [ '@doctrine' ]
+    campaignchain.operation.linkedin.form.type.share_news_item:
+        class: CampaignChain\Operation\LinkedInBundle\Form\Type\ShareNewsItemOperationType
+        arguments:
+            - '@doctrine'
+            - '@service_container'
+        tags:
+            - { name: form.type }
