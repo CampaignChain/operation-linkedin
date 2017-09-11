@@ -25,6 +25,8 @@ class ShareNewsItemOperationType extends OperationType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->setOptions($options);
+
         $builder
             ->add('message', 'textarea', array(
                 'property_path' => 'message',
@@ -39,13 +41,12 @@ class ShareNewsItemOperationType extends OperationType
 
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $defaults = array(
             'data_class' => 'CampaignChain\Operation\LinkedInBundle\Entity\NewsItem',
         );
 
-        if($this->content){
-            $defaults['data'] = $this->content;
-        }
         $resolver->setDefaults($defaults);
     }
 
